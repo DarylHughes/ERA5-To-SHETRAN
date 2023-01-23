@@ -1,7 +1,7 @@
 # ERA5-To-SHETRAN
 
 This project simply shares some code that:
-- takes global meteorological data from ERA5-Land (Muñoz Sabater et al. 2019) NB this requires some GIS pre-processing, described in a future publication
+- takes global meteorological data from ERA5-Land (Muñoz Sabater et al. 2019) NB this can be downloaded from Copernicus Climate Data Store (https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-land?tab=form)
 - translates this into a format suitable for SHETRAN (Newcastle University, 2023)
 
 This is useful for driving SHETRAN models.
