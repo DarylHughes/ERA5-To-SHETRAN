@@ -1,15 +1,12 @@
 # -*- coding: utf-8 -*-
 """
 Date created:   2023.01.23
-Last modified:  2023.01.23
+Last modified:  2023.01.24
 @author:        Daryl Hughes
 
 
 This script:
-    - Downloads ERA5-Land data via the CDS API:
-        - Download page: https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-ERA5-land?tab=overview
-        - Documentation: https://confluence.ecmwf.int/display/CKB/ERA5-Land%3A+data+documentation
-        - Request status: https://cds.climate.copernicus.eu/cdsapp#!/yourrequests
+    - Downloads ERA5-Land data via the CDS (Climate Data Store) API
     - Writes data to drive
     - Reads ERA5 data [m]
     - Plots data
@@ -43,10 +40,10 @@ The user must define:
 
 #%% User-defined variables
 
-FunctionsLibrary    = 'C:/Users/DH/OneDrive - Heriot-Watt University/Documents/HydrosystemsModellerRA/Writing(Shared)/Paper1'
-DirectoryIn         = 'C:/Users/DH/OneDrive - Heriot-Watt University/Documents/HydrosystemsModellerRA/HydroModelling/HydroInputData/PeTimeSeries/ERA5-Land/'
+FunctionsLibrary    = 'C:/Users/DH/OneDrive - Heriot-Watt University/Documents/HydrosystemsModellerRA/Writing(Shared)/Paper1/Code/'
+DirectoryIn         = 'C:/Users/DH/Downloads/'
 DirectoryOut        = 'C:/Users/DH/Downloads/'
-FileNameIn          = 'evaporation_Essequibo_years2000-2021_hours00'               # Specify download file name
+FileNameIn          = 'TEST_evaporation_Essequibo_years2000-2021_hours00'               # Specify download file name
 FileNameOut         = 'total_evaporation_Essequibo_years_2000-2021_hours00_cells'  # Specify output file name
 ExtIn               = '.nc'
 North               = 8.21                                                         # Set coordinates
@@ -67,7 +64,6 @@ EvapList = ['pev',                                                              
 #%% Import modules and functions
 
 import os
-import cdsapi
 import pandas as pd
 from netCDF4 import Dataset
 
@@ -78,27 +74,36 @@ from CustomFunctionsToSHETRAN import NetCDFToSHETRAN
 
 #%% Download data from Copernicus using API
 '''
+Data can be downloaded using either:
+    A) the web browser user interface (https://cds.climate.copernicus.eu/)
+    B) the CDS (Climate Data Store) API:
+        - Create CDS account:       https://cds.climate.copernicus.eu/
+        - Install cdsapi package:   https://cds.climate.copernicus.eu/api-how-to
+        - Install CDS API key:      https://confluence.ecmwf.int/display/CKB/How+to+install+and+use+CDS+API+on+Windows
+        - Download page:            https://cds.climate.copernicus.eu/cdsapp#!/dataset/reanalysis-era5-land?tab=form
+        - Data documentation:       https://confluence.ecmwf.int/display/CKB/ERA5-Land%3A+data+documentation
+        - Check request status:     https://cds.climate.copernicus.eu/cdsapp#!/yourrequests
+        - Run script below (once)
+
+'''
+
+
+'''
+# Download script
+
+import cdsapi
+
+os.chdir(DirectoryIn)
+
 # name client
 c = cdsapi.Client()
 
 c.retrieve(
-    'reanalysis-ERA5-land',
+    'reanalysis-era5-land',
     {
-        'variable': ['potential_evaporation',
-                     'total_evaporation',
-                     'evaporation_from_bare_soil',
-                     'evaporation_from_open_water_surfaces_excluding_oceans'
-                     'evaporation_from_vegetation_transpiration',
-                     'evaporation_from_the_top_of_canopy',
+        'variable': ['total_evaporation',
                      ],
         'year': [   '2000',
-            '2001', '2002', '2003',
-            '2004', '2005', '2006',
-            '2007', '2008', '2009',
-            '2010', '2011', '2012',
-            '2013', '2014', '2015',
-            '2016', '2017', '2018',
-            '2019', '2020', '2021',
             ],
         'month': [
             '01', '02', '03',
@@ -127,9 +132,13 @@ c.retrieve(
         ],
         'format': 'netcdf',
     },
-    FileName + ExtIn)
+    FileNameIn + ExtIn)
+
+os.chdir(FunctionsLibrary)
 
 '''
+
+
 
 #%% Read and wrangle ERA5 data
 
@@ -140,10 +149,9 @@ ERA5 = Dataset(DirectoryIn + FileNameIn + ExtIn)
 ERA5.variables.keys()
 ERA5.variables
 
-
 # Create datetime index (ERA units are hours since 1900-01-01 00:00:00.0)
 ERA5DateIndex = pd.DataFrame(pd.date_range(start='1900-01-01 00:00:00',
-                                           end = '2022-01-01 00:00:00',
+                                           end = '2030-01-01 00:00:00',
                                            freq = 'H'))
 
 # Loop through all days in ERA5 data and calculate absolute datetimes
@@ -158,8 +166,8 @@ DfTimeIndex = pd.DataFrame(data     = TimeIndex,
                            columns  = ['dateTime'])
 
 # Convert datetime to date index
-StartTime   = '2000-01-01 00:00:00'
-EndTime     = '2010-01-01 00:00:00'
+StartTime   = TimeIndex[0]
+EndTime     = TimeIndex[-1]
 StartIdx    = DfTimeIndex.index[DfTimeIndex['dateTime']==StartTime].tolist()[0]
 EndIdx      = DfTimeIndex.index[DfTimeIndex['dateTime']==EndTime].tolist()[0]
 
