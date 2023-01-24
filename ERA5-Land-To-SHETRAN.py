@@ -40,13 +40,13 @@ The user must define:
 
 #%% User-defined variables
 
-FunctionsLibrary    = 'C:/Users/DH/OneDrive - Heriot-Watt University/Documents/HydrosystemsModellerRA/Writing(Shared)/Paper1/Code/' # Set to directory containing CustomFunctionsToSHETRAN.py
-DirectoryIn         = 'C:/Users/DH/Downloads/'                                     # Set to directory containing raw data. NB string must terminate with '/'
-DirectoryOut        = 'C:/Users/DH/Downloads/'
-FileNameIn          = 'evaporation_Essequibo_years2000-2000_hours00'               # Specify download file name
-FileNameOut         = 'total_evaporation_Essequibo_years_2000-2021_hours00_cells'  # Specify output file name
+FunctionsLibrary    = ''                                                        # Set to directory containing CustomFunctionsToSHETRAN.py
+DirectoryIn         = ''                                                        # Set to directory containing raw data. NB string must terminate with '/'
+DirectoryOut        = ''
+FileNameIn          = ''                                                        # Specify download file name
+FileNameOut         = ''                                                        # Specify output file name
 ExtIn               = '.nc'
-North               = 8.21                                                         # Set coordinates
+North               = 8.21                                                      # Set coordinates
 South               = 1.09
 West                = -62.94
 East                = -57.67
